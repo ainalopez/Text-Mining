@@ -1,4 +1,4 @@
-# Text_Mining_ABBABGroup
+# Text Mining
 
 Repository for Text Mining.
 
