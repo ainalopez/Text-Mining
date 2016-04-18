@@ -22,7 +22,7 @@ speech = json.loads(file_content)
 #Use an appropriate string method to split the string of the speech into a list
 #of smaller list of words.
 #Convert all words into lower case and return the list. Use a for loop. Then
-#use a list comprehension to do the same.
+#use a list comprehension to do the same
 
 #1
 stripped_text = re.sub(r'[\W_]', ' ', speech[2])
