@@ -65,9 +65,9 @@ def preprocess(text, alphanum_chars, lower = True):
     if lower:
         lower_words = [word.lower() for word in word_list]
         return lower_words
-    
-    return word_list
-    
+    else:
+        return word_list
+
 ####4####
 #Create a function _word_freq_ that takes as input a word list that has
 #been preprocessed and returns a dictionary of the word frequency. Which
@@ -120,7 +120,6 @@ def word_lengths(word_list):
 #should accept the text and a regular expression as input and return a list of
 #lists. Each element of the list should be a list with following structure:
 
-#[[year],[president],[paragraph1,paragraph2,...]]
 #1. year
 #2. president
 #3. List of the transcript of the speech broken down into paragraphs.
