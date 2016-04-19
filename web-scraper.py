@@ -36,5 +36,3 @@ all_links = [link for link in all_href_str if "/biz/" in link and "?" not in lin
 
 links = list(set(all_links))
 
-for i in links:
-    print i
