@@ -142,7 +142,27 @@ class Document():
 #Load AFINN-111.txt from ./data/AFINN. Inspect the contents of the file and
 #write a function that converts it into a dictionary where the keys are words
 #and values are the valence scores attributed to them. You may use the readme
-#file for hints.        
+#file for hints.
+
+def get_valence(string):
+    '''
+    This function opens the AFINN-111 file and converts it
+    into a dictionary with words as keys and valence score as values
+    Input: String, a word in the dictionary
+    Output: Int, the valence of input word
+    '''
+
+    #open AFINN-111 file as a list
+    with open("AFINN-111.txt", "r") as f:
+        lines = f.readlines()
+
+    #split by tab
+    content = [line.split("\t") for line in lines]
+
+    #create dictionary 
+    dictionary = dict((word, int(valence)) for (word,valence) in content)
+
+    return dictionary[string]
 
 #4
 #Now, use the presedential speeches from last week's HW to calculate its
