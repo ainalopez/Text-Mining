@@ -68,6 +68,22 @@ class Corpus():
         for doc in self.docs:
             self.token_set = self.token_set.union(doc.tokens)
 
+    def document_term_matrix(self):
+        """
+        description:  returns a D by V array of frequency counts
+        """
+        # subroutine: computes the counts of each vocabulary in the document
+        def counts(doc):
+            # initialize a matrix
+            term_mat = np.array([0]*len(self.token_set))
+            for token in doc.tokens:
+                term_mat[list(self.token_set).index(token)] = term_mat[list(self.token_set).index(token)] + 1
+        return term_mat;
+        
+        self.doc_term_matrix = [[counts(doc)] for doc in self.docs]
+
+
+
 class Document():
     
     """ The Doc class rpresents a class of individul documents
