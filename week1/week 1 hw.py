@@ -78,7 +78,7 @@ class Corpus():
             term_mat = np.array([0]*len(self.token_set))
             for token in doc.tokens:
                 term_mat[list(self.token_set).index(token)] = term_mat[list(self.token_set).index(token)] + 1
-        return term_mat;
+            return term_mat;
         
         self.doc_term_matrix = [[counts(doc)] for doc in self.docs]
 
