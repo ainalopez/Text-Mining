@@ -75,7 +75,7 @@ class Corpus():
         # subroutine: computes the counts of each vocabulary in the document
         def counts(doc):
             # initialize a matrix
-            term_mat = np.array([0]*len(self.token_set))
+            term_mat = [0]*len(self.token_set)
             for token in doc.tokens:
                 term_mat[list(self.token_set).index(token)] = term_mat[list(self.token_set).index(token)] + 1
             return term_mat;
