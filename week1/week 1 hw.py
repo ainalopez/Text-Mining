@@ -161,12 +161,10 @@ class Document():
 #file for hints.
 
 def get_valence(string):
-    '''
-    This function opens the AFINN-111 file and converts it
+    '''This function opens the AFINN-111 file and converts it
     into a dictionary with words as keys and valence score as values
     Input: String, a word in the dictionary
-    Output: Int, the valence of input word
-    '''
+    Output: Int, the valence of input word'''
 
     #open AFINN-111 file as a list
     with open("AFINN-111.txt", "r") as f:
@@ -187,3 +185,5 @@ def get_valence(string):
 #score as 0. Write a function that takes in a list of word and returns their
 #sentiment score. What is the score of the speech you have been assigned?
 #Which year, president gave the least and most positive speech?
+
+
