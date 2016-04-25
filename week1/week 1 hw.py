@@ -161,23 +161,24 @@ class Document():
 #and values are the valence scores attributed to them. You may use the readme
 #file for hints.
 
-def get_valence(string):
+def get_dictionary():
     '''This function opens the AFINN-111 file and converts it
     into a dictionary with words as keys and valence score as values
-    Input: String, a word in the dictionary
-    Output: Int, the valence of input word'''
-
+    Input: None
+    Output: Dictionary, Dictionary with words as keys
+    and the valence of word as value'''
+    
     #open AFINN-111 file as a list
     with open("AFINN-111.txt", "r") as f:
         lines = f.readlines()
 
     #split by tab
     content = [line.split("\t") for line in lines]
-
+    
     #create dictionary 
     dictionary = dict((word, int(valence)) for (word,valence) in content)
 
-    return dictionary[string]
+    return dictionary
 
 #4
 #Now, use the presedential speeches from last week's HW to calculate its
@@ -187,4 +188,15 @@ def get_valence(string):
 #sentiment score. What is the score of the speech you have been assigned?
 #Which year, president gave the least and most positive speech?
 
+def get_sentiment(word_list):
+    '''This function computes the score for a list of words
+    Input: word_list, a list of words
+    Output: Int, summation of valences for words in word list'''
 
+    #get dictionary
+    dictionary = get_dictionary()
+
+    #create list of valences for each word in word list
+    valence_list = [dictionary[key] for key in word_list]
+    
+    return sum(valence_list)
