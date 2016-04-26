@@ -196,13 +196,16 @@ def get_sentiment(word_list):
     #get dictionary
     dictionary = get_dictionary()
 
-    #create list of valences for each word in word list
+    #initialize empty valence list
     valence_list = []
-    
+
+    #loop through word list
     for key in word_list:
         try:
+            #if key in dictionary
             valence_list.append(dictionary[key])
    
         except:
+            #if not continue
             pass
     return sum(valence_list)
