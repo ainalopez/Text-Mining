@@ -251,4 +251,6 @@ sort_score = sorted(score, key = lambda tuple:tuple[2], reverse=True)
 #Top score: 1649, Carter, Year=1981
 #Bottom score: -6, Harding, Year=1922
 #Nick Speech: 130,Roosevelt, Year=1943
+#Aina Speech: 1071, Taft, Year=1911
+#Yaroslav Speech: 266, Polk, Year=1847
 print sort_score
