@@ -169,7 +169,7 @@ def get_dictionary():
     and the valence of word as value'''
     
     #open AFINN-111 file as a list
-    with open("AFINN-111.txt", "r") as f:
+    with open("/Users/Nick/Desktop/AFINN-111.txt", "r") as f:
         lines = f.readlines()
 
     #split by tab
@@ -209,3 +209,46 @@ def get_sentiment(word_list):
             #if not continue
             pass
     return sum(valence_list)
+
+def parse_text(textraw, regex):
+    """takes raw string and performs two operations
+    1. Breaks text into a list of speech, president and speech
+    2. breaks speech into paragraphs
+    """
+    prs_yr_spch_reg = re.compile(regex, re.MULTILINE|re.DOTALL)
+    
+    #Each tuple contains the year, last ane of the president and the speech text
+    prs_yr_spch = prs_yr_spch_reg.findall(textraw)
+    
+    #convert immutabe tuple to mutable list
+    prs_yr_spch = [list(tup) for tup in prs_yr_spch]
+    
+    for i in range(len(prs_yr_spch)):
+        prs_yr_spch[i][2] = prs_yr_spch[i][2].replace('\n', '')
+    
+    #sort
+    prs_yr_spch.sort()
+    
+    return(prs_yr_spch)
+    
+#text = open("/Users/Nick/Desktop/sou_all.txt", 'r').read()
+with open("/Users/Nick/Desktop/sou_all.txt", 'r') as f:
+    text = f.read()
+    
+regex = "_(\d{4}).*?_[a-zA-Z]+.*?_[a-zA-Z]+.*?_([a-zA-Z]+)_\*+(\\n{2}.*?)\\n{3}"
+pres_speech_list = parse_text(text, regex)
+
+corpus = Corpus(pres_speech_list, '/Users/Nick/Desktop/stopwords.txt', 2)
+
+score = []
+
+for doc in corpus.docs:
+    score.append((doc.year, doc.pres, get_sentiment(doc.text.split())))
+
+#sort by score
+sort_score = sorted(score, key = lambda tuple:tuple[2], reverse=True)
+
+#Top score: 1649, Carter, Year=1981
+#Bottom score: -6, Harding, Year=1922
+#Nick Speech: 130,Roosevelt, Year=1943
+print sort_score
