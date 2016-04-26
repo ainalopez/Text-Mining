@@ -296,8 +296,17 @@ def get_dictionary():
 
 
 ###################  EXERCISE 4  ###################
-#What is the score of the speech you have been assigned?
+# ANSWER:
+# What is the score of the speech you have been assigned?
+# Nick Speech: 130, Roosevelt, Year=1943
+# Aina Speech: 1071, Taft, Year=1911
+# Yaroslav Speech: 266, Polk, Year=1847
+
 # Which year, president gave the least and most positive speech?
+# Top score: 1649, Carter, Year=1981
+# Bottom score: -6, Harding, Year=1922
+
+# CODE below:
 
 def get_sentiment(word_list):
     '''This function computes the score for a list of words
@@ -359,9 +368,5 @@ for doc in corpus.docs:
 #sort by score
 sort_score = sorted(score, key = lambda tuple:tuple[2], reverse=True)
 
-#Top score: 1649, Carter, Year=1981
-#Bottom score: -6, Harding, Year=1922
-#Nick Speech: 130,Roosevelt, Year=1943
-#Aina Speech: 1071, Taft, Year=1911
-#Yaroslav Speech: 266, Polk, Year=1847
+
 print sort_score
