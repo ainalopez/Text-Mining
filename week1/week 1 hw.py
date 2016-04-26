@@ -5,6 +5,8 @@ import nltk
 import re
 from nltk.tokenize import wordpunct_tokenize
 from nltk import PorterStemmer
+import math
+from itertools import repeat
 
 
 class Corpus():
@@ -74,14 +76,86 @@ class Corpus():
         """
         # subroutine: computes the counts of each vocabulary in the document
         def counts(doc):
-            print 1
             # initialize a matrix
             term_mat = [0]*len(self.token_set)
             for token in doc.tokens:
                 term_mat[list(self.token_set).index(token)] = term_mat[list(self.token_set).index(token)] + 1
             return term_mat;
         
-        self.doc_term_matrix = [[counts(doc)] for doc in self.docs]
+        self.doc_term_matrix = []
+        
+        for doc in self.docs:
+            self.doc_term_matrix.append([doc.pres + " " + doc.year, counts(doc)])
+
+    def tf_idf(self):
+        """
+        description:  returns a D by V array of tf-idf scores
+        """
+        # Compute inverse document frequency
+        idf = [0]*len(self.token_set)
+        for token in self.token_set:
+            ind = 0
+            for doc in self.docs:
+                if token in doc.tokens:
+                    ind += 1
+                idf[list(self.token_set).index(token)] = math.log(self.N/ind)
+
+        # Create a subroutine that computes tf_idf for one document
+        def tfidf(doc):
+            term_mat = [0]*len(self.token_set)
+            for token in doc.tokens:
+                term_mat[list(self.token_set).index(token)] = term_mat[list(self.token_set).index(token)] + 1
+            
+            for i,term in enumerate(term_mat):
+                if term != 0:
+                    term_mat[i] = (1 + math.log(term)) * idf[i]
+            return term_mat;
+    
+        #tf_idf
+        self.tf_idf_matrix = []
+        for doc in self.docs:
+            self.tf_idf_matrix.append([doc.pres + " " + doc.year, tfidf(doc)])
+
+
+    def dict_rank(self, n, dictionary, token_repr):
+        """
+        description:  returns the top n documents based on a given dictionary and represenation of tokens
+        """
+        if token_repr == "tf-idf":
+            self.tf_idf()
+            representation = self.tf_idf_matrix
+            
+        if token_repr == "doc-term":
+            self.document_term_matrix()
+            representation = self.doc_term_matrix
+            
+        # Return top n docs based on dictionary given
+        score = []
+        x=self.token_set
+        x=list(x)
+        for token in x: 
+            try:
+                score.append(dictionary[token])
+            except: 
+                score.append(0)
+
+        # get a vector with all the scores in order
+        score=[int(x) for x in score]
+        rank = {}
+        elements=range(len(representation))
+   
+        for i in elements:
+            rank[representation[i][0]] = np.dot(score,representation[i][1])
+            
+        # Get sorted view of the keys.
+        s = sorted(rank, key=rank.get, reverse=True)[0:(n-1)]
+        
+        ranking = {}
+        for key in s:
+            ranking[key] =  rank[key]
+        
+        return ranking 
+
 
 
 
@@ -129,37 +203,74 @@ class Document():
         self.tokens = np.array([PorterStemmer().stem(t) for t in self.tokens])
 
 
-#1
-#Extend the classes to include the following methods:
-#document_term_matrix - which returns a D by V array of frequency counts.
-#tf_idf - returns a D by V array of tf-idf scores
-#dict_rank - returns the top n documents based on a given dictionary and represenation of tokens (eg. doc-term matrix or tf-idf matrix)
-#Include subroutines as and when necessary
+#############################################  QUESTIONS  ###############################################
+
+
+###################  EXERCISE 1  ###################
+# The three methods are added in the class Corpus.
 
 
 
-#2
-#Pick a dictionary (or dictionaries) of your choice from the Harvard IV set,
-#the Loughran-McDonald set, or some other of your choosing that you think may be
-#relevant for the data you collected. Then conduct the following exercise:
-#Use the two methods above to score each document in your data.
-#Explore whether the scores diﬀer according to the meta data ﬁelds you gathered:
-#for example, do diﬀerent speakers/sources/etc tend to receive a higher score
-#than others?
-#Do the answers to the previous question depend on whether tf-idf weighting is
-#applied or not? Why do you think there is (or is not) a diﬀerence in your
-#answers?
+###################  EXERCISE 2  ###################
 
-#3
-#We will now do a sentiment analysis using the AFINN list of words.
-#AFINN is a list of English words rated for valence with an integer between
-#minus five (negative) and plus five (positive). The words have been manually
-#labeled by Finn Årup Nielsen in 2009-2011. A positive valence score can be
-#interpreted as the word conveying a postive emotion and vice versa.
-#Load AFINN-111.txt from ./data/AFINN. Inspect the contents of the file and
-#write a function that converts it into a dictionary where the keys are words
-#and values are the valence scores attributed to them. You may use the readme
-#file for hints.
+# In the same folder as this document in Github, there is a pdf with our answers 
+# to this question. Below can be found the code. BE CAREFUL!!! IT CAN TAKE A 
+# COUPLE OF HOURS
+
+def parse_text(textraw, regex):
+    """takes raw string and performs two operations
+    1. Breaks text into a list of speech, president and speech
+    2. breaks speech into paragraphs
+    """
+    prs_yr_spch_reg = re.compile(regex, re.MULTILINE|re.DOTALL)
+    
+    #Each tuple contains the year, last ane of the president and the speech text
+    prs_yr_spch = prs_yr_spch_reg.findall(textraw)
+    
+    #convert immutabe tuple to mutable list
+    prs_yr_spch = [list(tup) for tup in prs_yr_spch]
+    
+    for i in range(len(prs_yr_spch)):
+        prs_yr_spch[i][2] = prs_yr_spch[i][2].replace('\n', '')
+    
+    #sort
+    prs_yr_spch.sort()
+    
+    return(prs_yr_spch)
+    
+text = open("/Users/ainalopez/Downloads/text_mining-master/data/pres_speech/sou_all copy.txt", 'r').read()
+#text = open("/home/yaroslav/Projects/text_mining/data/pres_speech/sou_all.txt", 'r').read()
+regex = "_(\d{4}).*?_[a-zA-Z]+.*?_[a-zA-Z]+.*?_([a-zA-Z]+)_\*+(\\n{2}.*?)\\n{3}"
+pres_speech_list = parse_text(text, regex)
+
+#Instantite the corpus class
+# corpus = Corpus(pres_speech_list, '/home/yaroslav/Projects/text_mining/data/stopwords/stopwords.txt', 2)
+corpus = Corpus(pres_speech_list, '/Users/ainalopez/Downloads/text_mining-master-2/data/stopwords/stopwords.txt', 2)
+
+# Import dictionary from excel file
+import pandas as pd
+#df = pd.read_excel("/home/yaroslav/Dropbox/BGSE/3rd Term/Text Mining/LoughranMcDonald_MasterDictionary_2014.xlsx", skiprows=0)
+df = pd.read_excel("/Users/ainalopez/Downloads/dictionary1.xlsx", skiprows=0)
+w = df['Word']
+words = [str(x).lower() for x in df['Word']]
+words=[PorterStemmer().stem(t) for t in words]
+score = [str(x).lower() for x in df['Positive']] # or any other method
+dictionary=dict(zip(words,score))
+
+# Applying dict_rank function
+X1 = corpus.dict_rank(corpus.N, dictionary,"doc-term")
+X2 = corpus.dict_rank(corpus.N, dictionary,"tf-idf")
+
+# Print the Ranking 
+print sorted(X1, key=X1.get, reverse=True)
+print sorted(X2, key=X2.get, reverse=True)    
+
+
+
+
+
+###################  EXERCISE 3  ################### 
+
 
 def get_dictionary():
     '''This function opens the AFINN-111 file and converts it
@@ -180,13 +291,13 @@ def get_dictionary():
 
     return dictionary
 
-#4
-#Now, use the presedential speeches from last week's HW to calculate its
-#sentiment score. Match every word against the dictionary and come up with a
-#metric that captures the sentiment value. If a word is not present mark its
-#score as 0. Write a function that takes in a list of word and returns their
-#sentiment score. What is the score of the speech you have been assigned?
-#Which year, president gave the least and most positive speech?
+
+
+
+
+###################  EXERCISE 4  ###################
+#What is the score of the speech you have been assigned?
+# Which year, president gave the least and most positive speech?
 
 def get_sentiment(word_list):
     '''This function computes the score for a list of words
