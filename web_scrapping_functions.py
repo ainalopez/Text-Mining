@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import urllib
 import time, random
 import json
-
+import os
 
 
 '''
@@ -18,8 +18,12 @@ import json
  - Rating
  - User name
  - User Location
- - Numer of friends of user
+ - Number of friends of user
  - Number of reviews the user wrote
+ - Restaurant name
+ - Ranking of the review in restaurant
+ - Type of restaurant (list)
+ - Price category (Number of €€€€ in restaurant page)
  
 '''
 
@@ -60,6 +64,20 @@ def getNumReviews(soup):
     return num_reviews
 
 
+def getType(soup):
+    res=soup.select(".category-str-list a")
+    types=map(lambda x: (str(x.text)), res)
+    return types
+
+
+def getPrice(soup):
+    res=soup.select(".bullet-after .price-range")
+    types=map(lambda x: (len(x.text)), res)
+    return types
+
+
+
+
 def getData(url):
     
     # Get html code
@@ -75,6 +93,16 @@ def getData(url):
     urls=[url + "?start=" + str(sufix) for sufix in index]
     urls.insert(0,url)
 
+    # Characteristics of the restaurant 
+    
+    # Type of restaurant
+    types=getType(soup)
+        
+    # Price of restaurant (number of €)
+    price=getPrice(soup)
+
+
+
     # Initialize list
     ALL_REVIEWS=[]
     ALL_STARS=[]
@@ -82,6 +110,7 @@ def getData(url):
     ALL_USER_LOCATION=[]
     ALL_NUM_FRIENDS=[]
     ALL_NUM_REVIEWS=[]
+
     
     for link in urls:
         # Get soup
@@ -116,29 +145,46 @@ def getData(url):
         delay = random.randint(1,2)
         time.sleep(delay)
     
+    
     # Combine all lists
     data = zip(ALL_REVIEWS, ALL_STARS, ALL_USER_NAME, ALL_USER_LOCATION, ALL_NUM_FRIENDS, ALL_NUM_REVIEWS)
     
-    return data
+    return data, types, price
     
     
 #Create JSON: the name of the file is the name of the restaurant
 
-def createJSON(data,url):    
-    import json
-    rest_name=url.split("/")[-1]
-    out_file = open(rest_name,"w")
-    json_str = json.dumps(data, indent = 4)
-    out_file.write(json_str)
-    out_file.close()
+def createJSON(data,url):  
+ rest_name=url.split("/")[-1]
+ for i in range(len(data)):
+     file_name=rest_name+"_"+str(i)+".json"
+     out_file = open(file_name,"w")
+     doc = list(data[i])
+     doc.append(rest_name)
+     doc.append(i+1)
+     doc.append(tuple(types))
+     doc.append(int(str(price[0])))
+     json_str = json.dumps(doc, indent = 4)
+     out_file.write(json_str)
+     out_file.close()
     
 
 
-# Test
+# Example
 
 # Url of Restaurant to scrape
 url="http://www.yelp.com/biz/quimet-and-quimet-barcelona"
 
-# Get data and create JSON file
-data=getData(url)
+# Get data
+data, types, price=getData(url)
+
+# Save JSON 
+os.chdir("/home/yaroslav/Desktop/jsons")
 createJSON(data,url)
+
+
+
+
+# Read file
+#with open('quimet-and-quimet-barcelona_0.json') as data_file:    
+#    datan = json.load(data_file)
