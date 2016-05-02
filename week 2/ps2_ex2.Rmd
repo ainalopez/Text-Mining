@@ -1,0 +1,126 @@
+---
+title: "PS2"
+author: "Aina López, Nick Halliwell, Yaroslav Marchuk"
+output: pdf_document
+---
+
+## 2.a In this model, what are the parameters, what are the latent variables, and what is the observed data?
+
+Parameters: $\rho_k$, $\beta_{z_i}^1$, $\beta_{z_i}^2$
+
+Latent variables: $z_i$
+
+Observed data: $x_{iv}^1$ and $x_{iv}^2$
+
+## 2.b Write down the complete data log-likelihood function.
+
+$l_{comp} (X, z | \rho, B) = \sum_d \sum_k 1_{z_d = k} \Big [ \sum_{v_1} x_{dv}^1 log \beta_{k,v_1}^1  +  \sum_{v_2} x_{dv}^2 log \beta_{k,v_2}^2  \Big]$
+
+## 2.c Compute the expected value of the above log-likelihood function given fixed values for the parameters.
+
+$Q(\rho, B_1, B_2, \rho^i, B_1^i, B_2^i) = \sum_d \sum_k \hat{z_{d,k}} \Big [ + \sum_{v_1} x_{dv_1}^1 log \beta_{k,v_1}^1  +  \sum_{v_2} x_{dv_2}^2 log \beta_{k,v_2}^2  \Big]$
+
+where 
+
+$\hat{z_{d,k}} =  \rho_k \prod_{v_1} {\beta_{k,v_1}^1}^{x_{d,v_1}}  \prod_{v_2} {\beta_{k,v_2}^2}^{x_{d,v_2}}$
+
+## 2.d Maximize Q with respect to the parameter values.
+
+The Lagrangian of the complete log-likelihood is:
+
+$L= \sum_d \sum_k \hat{z_{d,k}} \Big [ + \sum_{v_1} x_{dv_1}^1 log \beta_{k,v_1}^1  +  \sum_{v_2} x_{dv_2}^2 log \beta_{k,v_2}^2  \Big]+ v(1-\sum_k \rho_k) + \sum_k \lambda_k^1 ( 1-\sum_{v_1}) + \sum_k \lambda_k^2 ( 1-\sum_{v_2})$
+
+- Derivative w.r.t $\rho_k$
+
+$\frac{dL}{d\rho_k} = \sum_d \frac{\hat{z_{d,k}}}{\rho_k} - v = 0$
+
+$\frac{ \sum_d  \hat{z_{d,k}}}{\rho_k} = v$
+
+$\sum_d  \hat{z_{d,k}} = v \rho_k$
+
+$v \rho_k = \sum_d  \hat{z_{d,k}}$
+
+$v \sum_k \rho_k = \sum_d \sum_k \hat{z_{d,k}}$
+
+If we compute the derivative w.r.t $v$ and set it to zero, we will get that $\sum_k \rho_k$.
+
+$v = \sum_d \sum_k \hat{z_{d,k}}$
+
+Using $v$ in the first equation we get that:
+
+$\rho_k =\frac{ \sum_d  \hat{z_{d,k}}}{ \sum_d \sum_k \hat{z_{d,k}}}$
+
+
+- Derivative w.r.t $\beta_{k,v_1}^1$
+
+
+$\frac{dL}{d\beta_{k,v_1}^1} = \sum_{d=1}^D \hat{z_{d,k}} \frac{x_{dv_1}^1}{\beta_{k,v_1}^1} - \lambda_k^1 = 0$
+
+$\sum_{d} \hat{z_{d,k}} x_{dv_1}^1  = \beta_{k,v_1}^1  \lambda_k^1$
+
+Taking the derivarive w.r.t $\lambda$ we get that $\sum_{v_1} \beta_{k,v_1}^1=1$
+
+
+$\sum_{v_1} \beta_{k,v_1}^1  \lambda_k^1 = \sum_{d} \hat{z_{d,k}} \sum_{v_1} x_{dv_1}^1$
+
+$\lambda_k^1 = \sum_{d} \hat{z_{d,k}} \sum_{v_1} x_{dv_1}^1$
+
+Plugging this result in the initial equation we get that:
+
+$\beta_{k,v_1}^1 = \frac{\sum_{d} \hat{z_{d,k}}  {x_{dv_1}^1}}{\sum_{d} \hat{z_{d,k}} \sum_{v_1} x_{dv_1}^1}$
+
+
+
+- Derivative w.r.t $\beta_{k,v_2}^2$
+
+
+$\frac{dL}{d\beta_{k,v_2}^2} = \sum_{d} \hat{z_{d,k}} \frac{x_{dv_2}^2}{\beta_{k,v_2}^2} - \lambda_k^2 = 0$
+
+$\sum_{d} \hat{z_{d,k}} x_{dv_2}^2= \beta_{k,v_2}^2  \lambda_k^2$
+
+Taking the derivarive w.r.t $\lambda$ we get that $\sum_{v_2} \beta_{k,v_2}^2=1$
+
+
+$\sum_{v_2} \beta_{k,v_2}^2  \lambda_k^2 = \sum_{d} \hat{z_{d,k}} \sum_{v_2} x_{dv_2}^2$
+
+$\lambda_k^2 = \sum_{d} \hat{z_{d,k}} \sum_{v_2} x_{dv_2}^2$
+
+Plugging this result in the initial equation we get that:
+
+$\beta_{k,v_2}^2 = \frac{\sum_{d} \hat{z_{d,k}}  {x_{dv_2}^2}}{\sum_{d} \hat{z_{d,k}} \sum_{v_2} x_{dv_2}^2}$
+
+
+## 2.e Write pseudo-code for implementing the EM algorithm for this model.
+
+Initialize $\rho^0$, ${\beta_{k,v_1}^1}^0$ and ${\beta_{k,v_2}^2}^0$
+
+
+for i in 1:Number of steps: 
+
+1. Expectation step
+
+$Q(\rho, B_1, B_2, \rho^i, B_1^i, B_2^i) = \sum_d \sum_k \hat{z_{d,k}} \Big [ + \sum_{v_1} x_{dv_1}^1 log \beta_{k,v_1}^1  +  \sum_{v_2} x_{dv_2}^2 log \beta_{k,v_2}^2  \Big]$
+
+where 
+
+$\hat{z_{d,k}} =  \rho_k \prod_{v_1} {\beta_{k,v_1}^1}^{x_{d,v_1}}  \prod_{v_2} {\beta_{k,v_2}^2}^{x_{d,v_2}}$
+
+2. Minimization step
+
+$\rho_k^i =\frac{ \sum_d  \hat{z_{d,k}}}{ \sum_d \sum_k \hat{z_{d,k}}}$
+
+${\beta_{k,v_1}^1}^i = \frac{\sum_{d} \hat{z_{d,k}}  {x_{dv_1}^1}}{\sum_{d} \hat{z_{d,k}} \sum_{v_1} x_{dv_1}^1}$
+
+
+${\beta_{k,v_2}^2}^i= \frac{\sum_{d} \hat{z_{d,k}}  {x_{dv_2}^2}}{\sum_{d} \hat{z_{d,k}} \sum_{v_2} x_{dv_2}^2}$
+
+
+3. Convergence criterion
+
+If $Q(\rho, B_1, B_2 \rho^i, B_1^i, B_2^i) - Q(\rho, B_1, B_2 \rho^i, B_1^{i-1}, B_2^{i-1})$ < $\epsilon$
+
+	Stop
+
+Else
+
+ 	Continue
