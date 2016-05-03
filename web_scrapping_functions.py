@@ -1,4 +1,5 @@
-﻿
+# -*- coding: utf-8 -*-
+
 # Import modules
 from bs4 import BeautifulSoup
 import urllib
@@ -167,27 +168,30 @@ def createJSON(data,url):
      json_str = json.dumps(doc, indent = 4)
      out_file.write(json_str)
      out_file.close()
-    
 
+get_links = []
 
-# Example
+with open("accepted_yelp_links", "r") as fi:
+    links = json.load(fi)
 
+for link in links:
+    get_links += link
 
-# Url of Restaurant to scrape
-url="http://www.yelp.com/biz/quimet-and-quimet-barcelona"
+out_file = open("accepted_yelp_links", "w")
+json_str = json.dumps(get_links, indent = 2)
+out_file.write(json_str)
+out_file.close()
 
 # Get data
-try:
-    data, types, price=getData(url)
-    createJson(data, url)
-except:
-    
-    with open("denied_yelp_links.json", "a") as f:
-        f.write(url)
-
-# Save JSON 
-os.chdir("/home/yaroslav/Desktop/jsons")
-createJSON(data,url)
+##try:
+##    os.chdir("/home/yaroslav/Desktop/jsons")
+##    data, types, price=getData(url)
+##    createJson(data, url)
+##    
+##except:
+##    os.chdir("/home/yaroslav/Desktop/jsons")
+##    with open("denied_yelp_links.json", "a") as f:
+##        f.write(url)
 
 
 
