@@ -174,7 +174,11 @@ with open("accepted_yelp_links", "r") as fi:
 #0-300 Nick
 #300-500 Yaro
 #500-len(links)+1 Aina
-for url in links[0:300]:
+    
+for url in links[0:2]:
+    delay = random.randint(1,2)
+    #pause execution for 1-2 seconds
+    time.sleep(delay)
     
     try:
         os.chdir("/Users/Nick/Desktop/Links")
@@ -183,7 +187,7 @@ for url in links[0:300]:
     
     except:
         os.chdir("/Users/Nick/Desktop")
-        with open("rejected.txt", "r") as f:
+        with open("rejected.txt", "w") as f:
             f.write(url)
 
 # Read file
