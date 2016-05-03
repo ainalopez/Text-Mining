@@ -169,32 +169,23 @@ def createJSON(data,url):
      out_file.write(json_str)
      out_file.close()
 
-get_links = []
-
 with open("accepted_yelp_links", "r") as fi:
     links = json.load(fi)
 
-for link in links:
-    get_links += link
-
-out_file = open("accepted_yelp_links", "w")
-json_str = json.dumps(get_links, indent = 2)
-out_file.write(json_str)
-out_file.close()
-
-# Get data
-##try:
-##    os.chdir("/home/yaroslav/Desktop/jsons")
-##    data, types, price=getData(url)
-##    createJson(data, url)
-##    
-##except:
-##    os.chdir("/home/yaroslav/Desktop/jsons")
-##    with open("denied_yelp_links.json", "a") as f:
-##        f.write(url)
-
-
-
+#0-300 Nick
+#300-500 Yaro
+#500-len(links)+1 Aina
+for url in links[0:300]:
+    
+    try:
+        os.chdir("/Users/Nick/Desktop/Links")
+        data, types, price=getData(url)
+        createJson(data, url)
+        
+    except:
+        os.chdir("/Users/Nick/Desktop")
+        with open("rejected.txt", "r") as f:
+            f.write(url)
 
 # Read file
 #with open('quimet-and-quimet-barcelona_0.json') as data_file:    
