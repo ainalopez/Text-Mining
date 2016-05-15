@@ -9,22 +9,24 @@ import os
 
 
 '''
-    Input: URL of restaurant
-    Output: JSON file with
-    To scrape a webpage, the function getData scrapes the site, and the function createJSON writes the data in a file.
-    Elements in JSON:
-    - Review
-    - Rating
-    - User name
-    - User Location
-    - Number of friends of user
-    - Number of reviews the user wrote
-    - Restaurant name
-    - Ranking of the review in restaurant
-    - Type of restaurant (list)
-    - Price category (Number of €€€€ in restaurant page)
-    
-    '''
+
+ Input: URL of restaurant
+ Output: JSON file with 
+
+ To scrape a webpage, the function getData scrapes the site, and the function createJSON writes the data in a file. 
+ Elements in JSON:
+ - Review
+ - Rating
+ - User name
+ - User Location
+ - Number of friends of user
+ - Number of reviews the user wrote
+ - Restaurant name
+ - Ranking of the review in restaurant
+ - Type of restaurant (list)
+ - Price category (Number of €€€€ in restaurant page)
+ 
+'''
 
 
 
@@ -78,9 +80,9 @@ def getPrice(soup):
 
 
 def getData(url):
-    
     # Get html code
-    html = urllib.urlopen(url).read()
+    url = 'http://' + url
+    html = urlopen(url).read()
     soup = BeautifulSoup(html)
     
     # Get all the pages with reviews
@@ -92,15 +94,11 @@ def getData(url):
     urls=[url + "?start=" + str(sufix) for sufix in index]
     urls.insert(0,url)
     
-    # Characteristics of the restaurant
-    
-    # Type of restaurant
+    # Characteristics of the restaurant: Type of restaurant
     types=getType(soup)
     
-    # Price of restaurant (number of €)
+    # Price category of the restaurant (number of €)
     price=getPrice(soup)
-    
-    
     
     # Initialize list
     ALL_REVIEWS=[]
@@ -109,7 +107,6 @@ def getData(url):
     ALL_USER_LOCATION=[]
     ALL_NUM_FRIENDS=[]
     ALL_NUM_REVIEWS=[]
-    
     
     for link in urls:
         # Get soup
@@ -128,7 +125,7 @@ def getData(url):
         new_names=getUserName(soup)
         ALL_USER_NAME=ALL_USER_NAME + new_names
         
-        # User Location
+         # User Location
         new_location=getUserLocation(soup)
         ALL_USER_LOCATION=ALL_USER_LOCATION + new_location
         
@@ -141,55 +138,55 @@ def getData(url):
         ALL_NUM_REVIEWS=ALL_NUM_REVIEWS + new_num_reviews
         
         # Sleeping time
-        delay = random.randint(1,2)
+        delay = random.randint(1,4)
         time.sleep(delay)
-    
     
     # Combine all lists
     data = zip(ALL_REVIEWS, ALL_STARS, ALL_USER_NAME, ALL_USER_LOCATION, ALL_NUM_FRIENDS, ALL_NUM_REVIEWS)
-    
     return data, types, price
+    
 
 
 #Create JSON: the name of the file is the name of the restaurant
 
-def createJSON(data,url):
-    rest_name=url.split("/")[-1]
-        for i in range(len(data)):
-            file_name=rest_name+"_"+str(i)+".json"
-            out_file = open(file_name,"w")
-            doc = list(data[i])
-            doc.append(rest_name)
-            doc.append(i+1)
-            doc.append(tuple(types))
-            doc.append(int(str(price[0])))
-            json_str = json.dumps(doc, indent = 4)
-            out_file.write(json_str)
-            out_file.close()
+def createJSON(data,url):  
+ rest_name=url.split("/")[-1]
+
+for i in range(len(data)):
+     file_name=rest_name+"_"+str(i)+".json"
+     out_file = open(file_name,"w")
+     
+     doc = list(data[i])
+     doc.append(rest_name)
+     doc.append(i+1)
+     doc.append(tuple(types))
+     
+     if len(price)>0: 
+     	doc.append(int(str(price[0])))
+     
+     json_str = json.dumps(doc, indent = 4)
+     out_file.write(json_str)
+     out_file.close()
 
 
-with open("accepted_yelp_links", "r") as fi:
+
+with open("/Users/ainalopez/Desktop/Text-Mining/accepted_yelp_links", "r") as fi:
     links = json.load(fi)
 
 #0-300 Nick
 #300-500 Yaro
-#500-len(links)+1 Aina
-    
-for url in links[0:2]:
-    delay = random.randint(1,2)
-    #pause execution for 1-2 seconds
+#500-len(links)-1 Aina
+for url in links[1:(len(links)-1)]:
+    delay = random.randint(1,5)
     time.sleep(delay)
-    
     try:
-        os.chdir("/Users/Nick/Desktop/Links")
+        os.chdir("/Users/ainalopez/Desktop/Links")
         data, types, price=getData(url)
-        createJson(data, url)
-    
+        createJSON(data, url)
+        
     except:
-        os.chdir("/Users/Nick/Desktop")
-        with open("rejected.txt", "w") as f:
+        os.chdir("/Users/ainalopez/Desktop/Rejected")
+        with open("rejected.txt", "a") as f:
             f.write(url)
+            f.write("\n")
 
-# Read file
-#with open('quimet-and-quimet-barcelona_0.json') as data_file:    
-#    datan = json.load(data_file)
