@@ -170,12 +170,10 @@ for i in range(len(data)):
 
 
 
-with open("/Users/ainalopez/Desktop/Text-Mining/accepted_yelp_links", "r") as fi:
+with open("Text-Mining/accepted_yelp_links_small", "r") as fi:
     links = json.load(fi)
 
-#0-300 Nick
-#300-500 Yaro
-#500-len(links)-1 Aina
+
 for url in links[1:(len(links)-1)]:
     delay = random.randint(1,5)
     time.sleep(delay)

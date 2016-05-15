@@ -34,6 +34,29 @@ And we stored each review in a *.json* file.
 
 ## 1. Instructions
 
+First of all, install the follwing python modules:
+
+- bs4
+- urllib
+- time
+- random
+- json
+- os
+
+
+In the web_crawler folder of our github account, you can find two files:
+
+- *accepted_yelp_links_small*: small sample of links
+- *web_scrapping-yelp.py*: script to scrape the data. 
+
+The next step is to create two folders, one called Links and other called Rejected. Modify the file *web_scrapping-yelp.py*:
+
+1. Line 173: write the directory of the file  *accepted_yelp_links_small*.
+2. Line 181: write the directory of the folder Links.
+3. Line 186: write the directory of the folder Rejected.
+
+
+Now everything is ready! You can run the script *web_scrapping-yelp.py*. Once it finished, you will find in the folder Links, all the json files with the reviews. In the folder Rejected, you will find a text file with the URLs of the rejected links.
 
 
 ## 2. How it works?
