@@ -16,7 +16,7 @@ For this project, we scraped the reviews of all the restaurants in Barcelona, wh
 * Information of the user: 
     + Number of friends
     + Number of reviews
-    + Nacionality 
+    + Nationality 
 
 * Details of the restaurant: 
     + Type of food 
@@ -34,7 +34,7 @@ And we stored each review in a *.json* file.
 
 ## 1. Instructions
 
-First of all, install the follwing python modules:
+First of all, import the follwing python modules:
 
 - bs4
 - urllib
@@ -75,7 +75,9 @@ Finally, after each iteration, stop a random amount of seconds.
 
 
 ## 3. Dealing with errors
-How is our code robust?, How do we deal with unexpected failures? What Logs have you mantained?
+
+In order to make our code robust, we exploited Python's exception handling. Our crawler iterates through a file of url links, tries to open the url and write the data to a *.json* file. If for whatever reason this fails, the rejected link is appended to a *rejected* file, and the iterative process continues. Exception handling allowed us to continue the iterative process without interruption, knowning that any links raising an error would be written to the *rejected* file.  
 
 ## 4. What features have you implemented specifially to tadhere to the robots.txt file of your target website?
 
+The *robot.txt* file allowed us to grab the information we wanted, in fact, the website only disallowed the collection of business photos and urls, user bookmarks and friends, and other minor things.  We were not interested in this information, so this was not a problem. As mentioned above, our crawler iterates through a file of yelp urls. In order to avoid being blocked by the website, we introduce a random delay between $1$ and $5$ seconds after each iteration. On top of this, we add another random delay after the function has opened the url and collected the information. This random delay is between $1$ and $4$ seconds. We had no problems collected the data, and were able to completeely scrape yelp.com of restaurant reviews in Barcelona. 
