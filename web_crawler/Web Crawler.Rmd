@@ -1,5 +1,5 @@
 ---
-title: "Web Crawler: yelp "
+title: "Web Crawler: Yelp "
 author: "Nick Halliwell, Aina López, Yaroslav Marchuk"
 date: "15 May 2016"
 output: pdf_document
